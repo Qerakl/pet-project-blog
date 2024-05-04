@@ -22,6 +22,9 @@ Route::controller(UserController::class)->group(function (){
 });
 Route::controller(CommentController::class)->group(function (){
     Route::post('/comments/store/{id}','add_comment')->name('comments/store');
+    Route::get('/comments/edit/{id}','edit')->name('comments/edit');
+    Route::get('/comments/destroy/{id}','destroy')->name('comments/destroy');
+    Route::post('/comments/edit/{id}','update')->name('comments/edit');
     
     
 });

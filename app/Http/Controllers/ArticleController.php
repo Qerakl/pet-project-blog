@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
@@ -59,6 +60,7 @@ class ArticleController extends Controller
         $articles = Article::where('id', $id)->get();
         $comments = Comment::where('article_id', $id)->get();
         
+        
         return view('articles/show', ['articles'=>$articles, 'comments'=>$comments]);
     }
 
@@ -67,7 +69,8 @@ class ArticleController extends Controller
      */
     public function edit(string $id)
     {
-        return view('articles/edit');
+        $articles = Article::where('id', $id)->get();
+        return view('articles/edit', ['articles'=>$articles ]);
     }
 
     /**
@@ -75,7 +78,30 @@ class ArticleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $articles = Article::where('id', $id)->get();
+        if(!empty($request->image)){
+            
+            $image = $request->file('image')->store('public');
+            $image = $request->image->hashName();
+            Article::where('id', $id)->update([
+                'title' => $request->title,
+                'body' => $request->body,
+                'image' => $image,
+            ]);
+            foreach($articles as $article){
+                Storage::delete('public/'.$article->image); //удаление файла фото статьи после успешного обновления
+            }
+            foreach($articles as $article){
+                return redirect(route('articles.show', $article->id));
+            }
+        }
+        Article::where('id', $id)->update([
+            'title' => $request->title,
+            'body' => $request->body,
+        ]);
+        foreach($articles as $article){
+            return redirect(route('articles.show', $article->id));
+    }
     }
 
     /**
@@ -83,6 +109,12 @@ class ArticleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $articles = Article::where('id', $id)->get();
+        foreach($articles as $article){
+            Storage::delete('public/'.$article->image); //удаление файла фото статьи
+        }
+        Comment::where('article_id', $id)->delete();
+        Article::where('id', $id)->delete();
+        return redirect('/');
     }
 }

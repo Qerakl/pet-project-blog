@@ -12,8 +12,19 @@
                 <p class="card-text">{{ $article->excerpt }}</p>
                 <a href="{{ route('articles.show', $article->id) }}" class="btn btn-primary">Читать далее</a>
             </div>
+            @if(session('user.id') == $article->user_id)
+            <div class="card-footer d-flex justify-content-end">
+                <a href="{{route('articles.edit', $article->id)}}" class="btn btn-info mr-2">Редактировать</a>
+                <form id="destroy" action="{{ route('articles.destroy', $article->id) }}" method="POST">
+                    @csrf
+                    @method('delete')
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+            @endif
         </div>
         @endforeach
     </div>
 </div>
+
 @endsection

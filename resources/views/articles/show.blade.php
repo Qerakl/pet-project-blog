@@ -16,14 +16,25 @@
 
         <h3>Комментарии</h3>
         @foreach($comments as $comment)
-        <div class="card my-3">
-            <div class="card-body">
+<div class="card my-3">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
                 <h5 class="card-title">{{ $comment->user_name }}</h5>
                 <p class="card-text">{{ $comment->body }}</p>
                 <small class="text-muted">{{ $comment->created_at }}</small>
             </div>
+            @if(session('user.id') == $comment->user_id)
+            <div class="ml-3">
+                <a href="{{ route('comments/edit', $comment->id) }}" class="btn btn-sm btn-info mr-2">Редактировать</a>
+                <a href="{{ route('comments/destroy', $comment->id) }}" class="btn btn-sm btn-danger">Удалить</a>
+            </div>
+            @endif
         </div>
-        @endforeach
+    </div>
+</div>
+@endforeach
+
         
         <!-- Форма для добавления нового комментария -->
         <form action="{{ route('comments/store', $article->id) }}" method="POST">

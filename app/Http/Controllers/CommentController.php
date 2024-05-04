@@ -22,4 +22,29 @@ class CommentController extends Controller
         ]);
         return redirect('/articles/'.$id);
     }
+    public function edit(string $id)
+    {
+        $comments = Comment::where('id', $id)->get();
+        return view('comments/edit', ['comments'=>$comments ]);
+    }
+    public function update(Request $request, string $id)
+    {
+        $comments = Comment::where('id', $id)->get();
+        
+        Comment::where('id', $id)->update([
+            'body' => $request->body,
+        ]);
+            foreach($comments as $comment){
+                return redirect(route('articles.show', $comment->article_id));
+            }
+        
+    }
+    public function destroy(string $id)
+    {
+        $comments = Comment::where('id', $id)->get();
+        Comment::where('id', $id)->delete();
+        foreach($comments as $comment){
+            return redirect(route('articles.show', $comment->article_id));
+        }
+    }
 }

@@ -6,6 +6,7 @@
         <h2 class="my-4">Редактирование статьи</h2>
 
         <!-- Форма для редактирования статьи -->
+        @foreach($articles as $article)
         <form action="{{ route('articles.update', $article->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -21,11 +22,12 @@
                 <label for="image">Изображение:</label>
                 <input type="file" class="form-control-file" id="image" name="image">
                 @if($article->image)
-                    <img src="{{ $article->image_url }}" class="img-thumbnail mt-2" alt="{{ $article->title }}">
+                    <img src="../../public/storage/{{ $article->image }}" class="img-thumbnail mt-2" alt="{{ $article->title }}">
                 @endif
             </div>
             <button type="submit" class="btn btn-primary">Сохранить изменения</button>
         </form>
+        @endforeach
     </div>
 </div>
 @endsection
